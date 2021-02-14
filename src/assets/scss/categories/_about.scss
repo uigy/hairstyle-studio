@@ -14,7 +14,7 @@
   }
 }
 
-.about__p::after {
+.about__info-text::after {
   content: "";
   margin: 1rem 0;
   position: relative;
@@ -24,7 +24,7 @@
   width: 100%;
 }
 
-.about__p:last-of-type::after {
+.about__info-text:last-of-type::after {
   display: none;
 }
 

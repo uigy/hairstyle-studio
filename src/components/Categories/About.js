@@ -12,18 +12,18 @@ const About = ({ sendData }) => {
     <section ref={section} className="category about">
       <div className="about__info">
         <section>
-          <p className="about__p">
+          <p className="about__info-text">
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corporis
             obcaecati aut saepe voluptas amet deleniti eaque consectetur illo
             rem possimus maiores, officiis illum at, ad sint iste cumque, ea
             adipisci!
           </p>
-          <p className="about__p">
+          <p className="about__info-text">
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nulla,
             atque vero eum rem reiciendis rerum quam temporibus blanditiis nobis
             vitae consequatur mollitia.
           </p>
-          <p className="about__p">
+          <p className="about__info-text">
             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sunt,
             excepturi.
           </p>
