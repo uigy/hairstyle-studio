@@ -1,0 +1,21 @@
+@mixin media($breakpoint, $orient: null) {
+  $size: map-get($breakpoints, $breakpoint);
+  $viewport: map-get($orientation, $orient);
+  @if ($size and $viewport) {
+    @media #{$size} and #{$viewport} {
+      @content;
+    }
+  } @else if ($size) {
+    @media #{$size} {
+      @content;
+    }
+  } @else {
+    @error 'wrong breakpoint or orientation value';
+  }
+}
+
+@mixin title-text {
+  color: $color-hero;
+  text-transform: uppercase;
+  text-shadow: 0 0 20px rgb(62, 233, 255), 3px 3px 40px rgb(62, 233, 255);
+}

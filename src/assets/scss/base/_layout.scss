@@ -1,0 +1,25 @@
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track-piece {
+  background-color: $color-bg;
+}
+
+::-webkit-scrollbar-thumb {
+  height: 30px;
+  background-color: $color-accent;
+}
+
+:root {
+  scrollbar-color: $color-accent $color-bg;
+  scrollbar-width: thin;
+}
+
+#content {
+  overflow: hidden;
+  background-color: #000;
+  @include media(md) {
+    margin-left: $nav-item-size;
+  }
+}
