@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 import NavIcons from "./NavIcons";
+import { sections } from "../../assets/js/data";
 
 const Nav = ({ navTitle, item, handleItemClick }) => {
   const navItems = [...NavIcons].map((Icon, index) => (
@@ -8,9 +10,9 @@ const Nav = ({ navTitle, item, handleItemClick }) => {
       className={`nav__item${item == index ? " nav__item--active" : ""}`}
       onClick={(e) => handleItemClick(index, e)}
     >
-      <a href="#" className="nav__link">
+      <NavLink to={sections[index].location} className="nav__link">
         <Icon active={item == index} />
-      </a>
+      </NavLink>
     </li>
   ));
   return (

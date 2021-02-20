@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Route, useHistory, useLocation } from "react-router-dom";
 import Nav from "../Nav";
 import Categories from "../Categories";
 import Footer from "../Footer";
+import { sections } from "../../assets/js/data";
 import {
   dimHomepageBackground,
   showVerticalTitle,
@@ -10,17 +12,19 @@ import {
 } from "../../assets/js/utils";
 
 const App = () => {
+  let history = useHistory();
+  let location = useLocation();
   const [item, setItem] = useState(-1);
+  const [lastScrollPosition, setLastScrollPosition] = useState(0);
   const homepageIntro = useRef("INITIAL_VALUE");
   const categoryHeading = useRef("INITIAL_VALUE");
   const categoryTitle = useRef("INITIAL_VALUE");
   const navTitle = useRef("INITIAL_VALUE");
-
-  const sections = []; // refs to category sections
+  const sectionsRefs = [];
   const categoryTitleText = [];
 
   function sendData(ref, categoryTitle) {
-    sections.push(ref);
+    sectionsRefs.push(ref);
     categoryTitleText.push(categoryTitle);
   }
 
@@ -31,28 +35,19 @@ const App = () => {
   let homepageImageHeight;
 
   useEffect(() => {
-    homepageImageHeight = homepageIntro.current.offsetHeight;
-
-    window.onbeforeunload = (e) => {
-      window.scrollTo(0, 0);
-    };
-
-    // showing up category heading
-    if (item > -1) {
-      activateElement(categoryHeading.current, "category__heading--active");
-
-      // changing category heading title
-      if (categoryTitle.current.textContent != categoryTitleText[item]) {
-        deactivateElement(categoryTitle.current, "category__title--active");
-        setTimeout(() => {
-          categoryTitle.current.textContent = categoryTitleText[item];
-          activateElement(categoryTitle.current, "category__title--active");
-        }, 150);
+    for (const section of sections) {
+      if (section.location === location.pathname) {
+        setItem(section.id);
+        window.scrollTo({
+          top: sectionsRefs[section.id].current.offsetTop,
+        });
       }
-    } else {
-      // hiding category heading
-      deactivateElement(categoryHeading.current, "category__heading--active");
     }
+  }, []);
+
+  useEffect(() => {
+    homepageImageHeight = homepageIntro.current.offsetHeight;
+    let currentItem = item;
 
     let isScrolling = null;
     const onScrollingStop = (callback) => {
@@ -65,40 +60,77 @@ const App = () => {
       showVerticalTitle(navTitle, homepageImageHeight);
 
       onScrollingStop(() => {
-        // autoscroll between sections and setting current item
-        if (item < 0) {
-          if (document.body.getBoundingClientRect().top < 0) {
-            window.scrollBy({
-              top: sections[0].current.getBoundingClientRect().top,
-              behavior: "smooth",
-            });
-            setItem(item + 1);
+        if (
+          item === -1 &&
+          window.scrollY > 0 &&
+          window.scrollY < sectionsRefs[0].current.offsetTop
+        ) {
+          window.scrollTo({
+            top: sectionsRefs[0].current.offsetTop,
+            behavior: "smooth",
+          });
+          setItem(0);
+          currentItem = 0;
+        }
+
+        const ranges = [
+          {
+            id: -1,
+            top: 0,
+            bottom: sectionsRefs[0].current.offsetTop - 50,
+          },
+        ];
+        sectionsRefs.forEach((sectionRef, index) => {
+          ranges.push({
+            id: index,
+            top:
+              sectionRef.current.offsetTop -
+              sectionRef.current.offsetHeight / 2,
+            bottom:
+              sectionRef.current.offsetTop +
+              sectionRef.current.offsetHeight / 2,
+          });
+        });
+
+        const currentRange = ranges.find(
+          (range) =>
+            range.top <= window.scrollY && range.bottom > window.scrollY
+        );
+
+        if (currentRange.id != item) {
+          if (currentRange.id === -1) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            history.push("/");
+          } else {
+            history.push(sections[currentRange.id].location);
+          }
+          setItem(currentRange.id);
+          currentItem = currentRange.id;
+        }
+
+        setLastScrollPosition(window.scrollY);
+
+        // showing up category heading
+        if (currentItem > -1) {
+          activateElement(categoryHeading.current, "category__heading--active");
+
+          // changing category heading title
+          if (
+            categoryTitle.current.textContent != categoryTitleText[currentItem]
+          ) {
+            deactivateElement(categoryTitle.current, "category__title--active");
+            setTimeout(() => {
+              categoryTitle.current.textContent =
+                categoryTitleText[currentItem];
+              activateElement(categoryTitle.current, "category__title--active");
+            }, 150);
           }
         } else {
-          if (
-            item == 0 &&
-            sections[item].current.getBoundingClientRect().top > 5
-          ) {
-            window.scrollTo({
-              top: 0,
-              behavior: "smooth",
-            });
-            setItem(item - 1);
-          } else if (
-            (item < sections.length &&
-              sections[item].current.getBoundingClientRect().bottom < 550) ||
-            (item == sections.length - 1 &&
-              sections[item].current.getBoundingClientRect().top < -550)
-          ) {
-            setItem(item + 1);
-          } else if (
-            (item < sections.length &&
-              sections[item].current.getBoundingClientRect().top > 550) ||
-            (item == sections.length &&
-              sections[item - 1].current.getBoundingClientRect().top > -50)
-          ) {
-            setItem(item - 1);
-          }
+          // hiding category heading
+          deactivateElement(
+            categoryHeading.current,
+            "category__heading--active"
+          );
         }
       });
     };
@@ -110,14 +142,14 @@ const App = () => {
   function handleItemClick(index, e) {
     e.preventDefault();
     window.scrollBy({
-      top: sections[index].current.getBoundingClientRect().top,
+      top: sectionsRefs[index].current.getBoundingClientRect().top,
       behavior: "smooth",
     });
     setItem(index);
   }
 
   return (
-    <>
+    <Route>
       <header className="header">
         <Nav
           navTitle={navTitle}
@@ -142,7 +174,7 @@ const App = () => {
         {categoryList}
       </main>
       <Footer />
-    </>
+    </Route>
   );
 };
 
