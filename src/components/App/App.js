@@ -69,6 +69,7 @@ const App = () => {
             top: sectionsRefs[0].current.offsetTop,
             behavior: "smooth",
           });
+          history.push(sections[0].location);
           setItem(0);
           currentItem = 0;
         }
@@ -97,7 +98,7 @@ const App = () => {
             range.top <= window.scrollY && range.bottom > window.scrollY
         );
 
-        if (currentRange.id != item) {
+        if (currentRange && currentRange.id != item) {
           if (currentRange.id === -1) {
             window.scrollTo({ top: 0, behavior: "smooth" });
             history.push("/");
