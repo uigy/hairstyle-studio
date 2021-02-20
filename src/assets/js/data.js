@@ -1,3 +1,26 @@
+export const sections = [
+  {
+    id: 0,
+    name: "About",
+    location: "/about",
+  },
+  {
+    id: 1,
+    name: "Offer",
+    location: "/offer",
+  },
+  {
+    id: 2,
+    name: "Appointment",
+    location: "/appointment",
+  },
+  {
+    id: 3,
+    name: "Contact",
+    location: "/contact",
+  },
+];
+
 export const offerCategories = [
   {
     id: 0,
