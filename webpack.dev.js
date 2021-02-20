@@ -12,6 +12,7 @@ module.exports = merge(common, {
     contentBase: path.resolve(__dirname, "dist"),
     open: true,
     hot: true,
+    historyApiFallback: true,
   },
   devtool: "inline-source-map",
   plugins: [new ReactRefreshWebpackPlugin()],
